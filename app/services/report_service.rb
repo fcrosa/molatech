@@ -1,22 +1,18 @@
-# app/services/report_service.rb
 class ReportService
   def self.generate_yearly_report
     report = []
 
-    # Agrupar por año basado en `disbursed_on`
     years = Disbursement.pluck(:disbursed_on).map(&:year).uniq
 
     years.each do |year|
       disbursements = Disbursement.where("EXTRACT(YEAR FROM disbursed_on) = ?", year)
 
-      # Métricas
       total_disbursements = disbursements.count
       total_disbursed = disbursements.sum(:amount).round(2)
       total_fees = disbursements.sum(:commission).round(2)
 
-      # Cuotas mensuales (simulación)
       merchants = Merchant.where("EXTRACT(YEAR FROM live_on) <= ?", year)
-      months_with_fees = merchants.count * 12 # Suponiendo cuotas para todos los meses
+      months_with_fees = merchants.count * 12
       monthly_fee_amount = merchants.sum(:minimum_monthly_fee).round(2) * months_with_fees
 
       report << {
@@ -30,5 +26,6 @@ class ReportService
     end
 
     report
+    
   end
 end
