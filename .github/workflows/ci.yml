@@ -42,8 +42,8 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres
+      db:
+        image: postgres:16
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_PASSWORD: 'password'

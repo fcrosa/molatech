@@ -32,7 +32,7 @@ test:
   pool: 5
   username: postgres
   password: postgres
-  host: postgres://postgres:postgres@db:5432/test_db
+  host: db
 
 production:
   primary: &primary_production
