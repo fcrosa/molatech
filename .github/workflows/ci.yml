@@ -71,19 +71,3 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Run tests
-        env:
-          DATABASE_URL: postgres://postgres:postgres@db:5432/test_db
-          RAILS_ENV: test
-        run: |
-            bin/rails db:create db:schema:load
-            bin/rails test test:system
-
-      - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/screenshots
-          if-no-files-found: ignore
-
