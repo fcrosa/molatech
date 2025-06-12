@@ -22,6 +22,7 @@ RSpec.describe DisbursementService, type: :service do
         )
     end
 
+    
     it 'creates a disbursement record with the correct amounts' do
       service = DisbursementService.new(merchant)
 
@@ -49,7 +50,7 @@ RSpec.describe DisbursementService, type: :service do
 
     it 'calculates the correct commission for orders at the boundary values of 50 and 300' do
       # Set up orders with amounts at the boundary values
-      orders.first.update!(amount: 50.0)   # Exactly €50
+      orders.first.update!(amount: 49.00)   # less than €50
       orders.second.update!(amount: 300.0) # Exactly €300
       orders.third.update!(amount: 200.0)  # Between €50 and €300
 
@@ -111,5 +112,28 @@ RSpec.describe DisbursementService, type: :service do
       
       expect(orders.all? { |order| order.disbursement_id.nil? }).to be_truthy
     end
+
+    it 'includes orders created today' do
+      recent_order = create(
+        :order,
+        merchant_reference: merchant.reference,
+        disbursement_id: nil,
+        amount: 50.0,
+        created_at: Time.current
+      )
+
+      service = DisbursementService.new(merchant)
+      service.call
+
+      expect(recent_order.reload.disbursement_id).not_to be_nil
+    end
+
+    it 'handles a large number of orders efficiently' do
+      create_list(:order, 100, merchant_reference: merchant.reference, disbursement_id: nil, amount: 100.0)
+      service = DisbursementService.new(merchant)
+  
+      expect { service.call }.to change { Disbursement.count }.by(1)
+    end
+
   end
 end

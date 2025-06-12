@@ -7,18 +7,6 @@ class Disbursement < ApplicationRecord
   validates :reference, presence: true, uniqueness: true
   validates :disbursed_on, presence: true
 
-  def total_amount
-    orders.sum(:amount).round(2)
-  end
-
-  def total_commission
-    orders.map(&:commission_amount).sum.round(2)
-  end
-
-  def net_amount
-    (total_amount - total_commission).round(2)
-  end
-
   private
 
   def generate_reference
