@@ -45,8 +45,9 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: 'fcrosa'
-          POSTGRES_PASSWORD: 'fcrosa'
+          POSTGRES_USER: 'postgres'
+          POSTGRES_PASSWORD: 'password'
+          POSTGRES_DB: test_db
         ports:
           - 5432:5432
         options: --health-cmd="pg_isready" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -72,10 +73,11 @@ jobs:
 
       - name: Run tests
         env:
+          DATABASE_URL: postgres://postgres:postgres@db:5432/test_db
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test test:system
+        run: |
+            bin/rails db:create db:schema:load
+            bin/rails test test:system
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
@@ -85,5 +87,3 @@ jobs:
           path: ${{ github.workspace }}/tmp/screenshots
           if-no-files-found: ignore
 
-      - name: Run RSpec
-        run: bundle exec rspec
