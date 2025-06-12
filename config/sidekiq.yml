@@ -1,0 +1,4 @@
+:schedule:
+  schedule_disbursements:
+    cron: "0 0 * * *" # every day at midnight
+    class: "ScheduleDisbursements"
