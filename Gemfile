@@ -60,7 +60,7 @@ group :development, :test do
 end
 
 group :development, :test do
-  gem 'rspec-rails', '~> 6.0' 
+  gem 'rspec-rails', '~> 8.0' 
   gem 'factory_bot_rails', '~> 6.0'
   gem 'simplecov', require: false
   gem 'codecov', require: false
